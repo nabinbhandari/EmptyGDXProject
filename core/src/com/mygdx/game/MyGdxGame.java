@@ -33,10 +33,12 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 
         batch = new SpriteBatch();
         background = new Sprite(new Texture("background.png"));
-        world = new World(new Vector2(0, -400), true);
+        background.setOrigin(0, 0);
+        background.setScale(1/Constants.PPM);
+        world = new World(new Vector2(0, -10f), true);
         b2dr = new Box2DDebugRenderer();
-        camera = new OrthographicCamera(800f, 800f * screenHeight / screenWidth);
-        camera.position.set(400, 400 * screenHeight / screenWidth, 0);
+        camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT * screenHeight / screenWidth);
+        camera.position.set(Constants.VIEWPORT_WIDTH / 2, Constants.VIEWPORT_HEIGHT / 2 * screenHeight / screenWidth, 0);
         camera.update();
 
         createGround();
@@ -49,7 +51,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
         BodyDef bDef = new BodyDef();
         bDef.type = BodyDef.BodyType.StaticBody;
 
-        Rectangle rect = new Rectangle(0, 0, background.getWidth(), 50);
+        Rectangle rect = new Rectangle(0, 0, background.getWidth() * background.getScaleX(), .5f);
         bDef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
         Body ground = world.createBody(bDef);
 
@@ -57,6 +59,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
         shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
         FixtureDef fDef = new FixtureDef();
         fDef.shape = shape;
+        fDef.friction = 0.5f;
         ground.createFixture(fDef);
     }
 
@@ -67,7 +70,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
-        world.step(1 / 60f, 6, 2);
+        world.step(1 / 60f, 60, 20);
         Gdx.gl.glClearColor(0.4f, 0.6f, 0.9f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();

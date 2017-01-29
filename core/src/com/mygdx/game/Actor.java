@@ -21,37 +21,39 @@ public class Actor extends Sprite {
 
     public Actor(World world) {
         super(new Texture("bunny.png"));
+        setScale(1/Constants.PPM);
         this.world = world;
         init();
     }
 
     public void init() {
         BodyDef bDef = new BodyDef();
-        bDef.position.set(100, 300);
+        bDef.position.set(2, 2);
         bDef.type = BodyDef.BodyType.DynamicBody;
         b2Body = world.createBody(bDef);
 
         FixtureDef fDef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(80);
+        shape.setRadius(.35f);
 
         fDef.shape = shape;
+        fDef.friction = 0.5f;
         b2Body.createFixture(fDef);
     }
 
     public void update() {
-        setPosition(b2Body.getPosition().x - 80, b2Body.getPosition().y - 80);
+        setPosition(b2Body.getPosition().x - getWidth()/2, b2Body.getPosition().y - getHeight()/2);
     }
 
     public void jump() {
-        b2Body.applyLinearImpulse(new Vector2(0, 200), b2Body.getWorldCenter(), true);
+        b2Body.applyLinearImpulse(new Vector2(0, 5), b2Body.getWorldCenter(), true);
     }
 
     public void move(boolean forward) {
         if (forward) {
-            b2Body.applyLinearImpulse(new Vector2(200, 0), b2Body.getWorldCenter(), true);
+            b2Body.applyLinearImpulse(new Vector2(2, 0), b2Body.getWorldCenter(), true);
         } else {
-            b2Body.applyLinearImpulse(new Vector2(-200, 0), b2Body.getWorldCenter(), true);
+            b2Body.applyLinearImpulse(new Vector2(-2, 0), b2Body.getWorldCenter(), true);
         }
     }
 }
