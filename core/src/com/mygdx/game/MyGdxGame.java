@@ -27,7 +27,7 @@ public class MyGdxGame extends ApplicationAdapter {
     private Box2DDebugRenderer b2dr;
     private OrthographicCamera camera;
     private Actor actor;
-    private Fish fish;
+    public static Fish fish;
 
     @Override
     public void create() {
@@ -39,6 +39,7 @@ public class MyGdxGame extends ApplicationAdapter {
         background.setOrigin(0, 0);
         background.setScale(1 / Constants.PPM);
         world = new World(new Vector2(0, -10f), true);
+        world.setContactListener(new MyContactListener());
         b2dr = new Box2DDebugRenderer();
         camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT * screenHeight / screenWidth);
         camera.position.set(Constants.VIEWPORT_WIDTH / 2, Constants.VIEWPORT_HEIGHT / 2 * screenHeight / screenWidth, 0);
@@ -97,7 +98,8 @@ public class MyGdxGame extends ApplicationAdapter {
     @Override
     public void dispose() {
         background.getTexture().dispose();
-        batch.dispose();
         actor.dispose();
+        batch.dispose();
+        world.dispose();
     }
 }

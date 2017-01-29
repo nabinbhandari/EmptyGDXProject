@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.Constants;
+import com.mygdx.game.MyGdxGame;
 
 /**
  * Created on 1/29/2017.
@@ -40,7 +41,8 @@ public class Actor extends Sprite {
 
         fDef.shape = shape;
         fDef.friction = 0.5f;
-        b2Body.createFixture(fDef);
+
+        b2Body.createFixture(fDef).setUserData("actor");
     }
 
     private boolean isAlive() {
@@ -50,6 +52,7 @@ public class Actor extends Sprite {
     public void update() {
         if (!isAlive()) {
             init();
+            MyGdxGame.fish.consumed = false;
         }
         if (Gdx.input.isTouched()) {
             float screenX = Gdx.input.getX();
