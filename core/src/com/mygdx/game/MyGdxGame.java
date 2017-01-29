@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.objects.Actor;
+import com.mygdx.game.objects.Fish;
 
 public class MyGdxGame extends ApplicationAdapter {
     private float screenHeight;
@@ -26,6 +27,7 @@ public class MyGdxGame extends ApplicationAdapter {
     private Box2DDebugRenderer b2dr;
     private OrthographicCamera camera;
     private Actor actor;
+    private Fish fish;
 
     @Override
     public void create() {
@@ -44,6 +46,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
         createGround();
         actor = new Actor(world);
+        fish = new Fish(world);
         InputAdapter inputAdapter = new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -86,6 +89,7 @@ public class MyGdxGame extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
         background.draw(batch);
         actor.draw(batch);
+        fish.draw(batch);
         batch.end();
         b2dr.render(world, camera.combined);
     }
