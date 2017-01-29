@@ -2,7 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,24 +17,24 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
-    private float screenWidth, screenHeight;
+public class MyGdxGame extends ApplicationAdapter {
+    private float screenHeight;
     private SpriteBatch batch;
     private Sprite background;
     private World world;
     private Box2DDebugRenderer b2dr;
     private OrthographicCamera camera;
-    private Actor actor;
+    private com.mygdx.game.objects.Actor actor;
 
     @Override
     public void create() {
-        screenWidth = Gdx.graphics.getWidth();
+        float screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
 
         batch = new SpriteBatch();
         background = new Sprite(new Texture("background.png"));
         background.setOrigin(0, 0);
-        background.setScale(1/Constants.PPM);
+        background.setScale(1 / Constants.PPM);
         world = new World(new Vector2(0, -10f), true);
         b2dr = new Box2DDebugRenderer();
         camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT * screenHeight / screenWidth);
@@ -42,9 +42,17 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
         camera.update();
 
         createGround();
-
-        actor = new Actor(world);
-        Gdx.input.setInputProcessor(this);
+        actor = new com.mygdx.game.objects.Actor(world);
+        InputAdapter inputAdapter = new InputAdapter() {
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                if (screenY < screenHeight / 2 && actor.b2Body.getLinearVelocity().y == 0) {
+                    actor.jump();
+                }
+                return true;
+            }
+        };
+        Gdx.input.setInputProcessor(inputAdapter);
     }
 
     private void createGround() {
@@ -84,55 +92,5 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
     public void dispose() {
         batch.dispose();
         background.getTexture().dispose();
-    }
-
-
-    //InputProcessor methods.
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (screenY < screenHeight / 2) {
-            actor.jump();
-        }
-        if (screenX < screenWidth / 3) {
-            actor.move(false);
-        } else if (screenX > screenWidth * 2 / 3) {
-            actor.move(true);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
-        return false;
     }
 }

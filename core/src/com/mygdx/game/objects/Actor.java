@@ -1,5 +1,6 @@
-package com.mygdx.game;
+package com.mygdx.game.objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.Constants;
 
 /**
  * Created on 1/29/2017.
@@ -16,17 +18,17 @@ import com.badlogic.gdx.physics.box2d.World;
  */
 
 public class Actor extends Sprite {
-    World world;
-    Body b2Body;
+    private World world;
+    public Body b2Body;
 
     public Actor(World world) {
         super(new Texture("bunny.png"));
-        setScale(1/Constants.PPM);
+        setScale(1 / Constants.PPM);
         this.world = world;
         init();
     }
 
-    public void init() {
+    private void init() {
         BodyDef bDef = new BodyDef();
         bDef.position.set(2, 2);
         bDef.type = BodyDef.BodyType.DynamicBody;
@@ -42,18 +44,30 @@ public class Actor extends Sprite {
     }
 
     public void update() {
-        setPosition(b2Body.getPosition().x - getWidth()/2, b2Body.getPosition().y - getHeight()/2);
+        if (Gdx.input.isTouched()) {
+            float screenX = Gdx.input.getX();
+            if (screenX < Gdx.graphics.getWidth() / 3) {
+                moveBackward();
+            } else if (screenX > Gdx.graphics.getWidth() * 2 / 3) {
+                moveForward();
+            }
+        }
+        setPosition(b2Body.getPosition().x - getWidth() / 2, b2Body.getPosition().y - getHeight() / 2);
     }
 
     public void jump() {
         b2Body.applyLinearImpulse(new Vector2(0, 5), b2Body.getWorldCenter(), true);
     }
 
-    public void move(boolean forward) {
-        if (forward) {
-            b2Body.applyLinearImpulse(new Vector2(2, 0), b2Body.getWorldCenter(), true);
-        } else {
-            b2Body.applyLinearImpulse(new Vector2(-2, 0), b2Body.getWorldCenter(), true);
+    private void moveForward() {
+        if (b2Body.getLinearVelocity().x < 2) {
+            b2Body.applyLinearImpulse(new Vector2(1.5f, 0), b2Body.getWorldCenter(), true);
+        }
+    }
+
+    private void moveBackward() {
+        if (b2Body.getLinearVelocity().x > -2) {
+            b2Body.applyLinearImpulse(new Vector2(-1.5f, 0), b2Body.getWorldCenter(), true);
         }
     }
 }
