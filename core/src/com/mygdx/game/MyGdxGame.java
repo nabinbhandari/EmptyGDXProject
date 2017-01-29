@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -16,7 +17,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class MyGdxGame extends ApplicationAdapter {
+public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
     SpriteBatch batch;
     Sprite background;
     World world;
@@ -40,7 +41,6 @@ public class MyGdxGame extends ApplicationAdapter {
         camera = new OrthographicCamera(500f, 500f * screenHeight / screenWidth);
         camera.position.set(250, 250 * screenHeight / screenWidth, 0);
         camera.update();
-        batch.setProjectionMatrix(camera.combined);
 
         BodyDef bdef = new BodyDef();
         PolygonShape shape = new PolygonShape();
@@ -58,10 +58,15 @@ public class MyGdxGame extends ApplicationAdapter {
         body.createFixture(fdef);
 
         actor = new Actor(world);
+        Gdx.input.setInputProcessor(this);
     }
 
     @Override
     public void render() {
+        camera.position.x = actor.b2Body.getWorldCenter().x;
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+
         world.step(1 / 60f, 6, 2);
         // Sets the clear screen color to: Cornflower Blue
         Gdx.gl.glClearColor(0x64 / 255.0f, 0x95 / 255.0f, 0xed / 255.0f, 0xff / 255.0f);
@@ -76,5 +81,55 @@ public class MyGdxGame extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         background.getTexture().dispose();
+    }
+
+
+    //InputProcessor methods.
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (screenY < screenHeight / 2) {
+            actor.jump();
+        }
+        if (screenX < screenWidth / 3) {
+            actor.move(false);
+        } else if (screenX > screenWidth * 2 / 3) {
+            actor.move(true);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }
