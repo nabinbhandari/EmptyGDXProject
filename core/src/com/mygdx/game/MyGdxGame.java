@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.objects.Actor;
 
 public class MyGdxGame extends ApplicationAdapter {
     private float screenHeight;
@@ -24,7 +25,7 @@ public class MyGdxGame extends ApplicationAdapter {
     private World world;
     private Box2DDebugRenderer b2dr;
     private OrthographicCamera camera;
-    private com.mygdx.game.objects.Actor actor;
+    private Actor actor;
 
     @Override
     public void create() {
@@ -42,7 +43,7 @@ public class MyGdxGame extends ApplicationAdapter {
         camera.update();
 
         createGround();
-        actor = new com.mygdx.game.objects.Actor(world);
+        actor = new Actor(world);
         InputAdapter inputAdapter = new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -73,15 +74,16 @@ public class MyGdxGame extends ApplicationAdapter {
 
     @Override
     public void render() {
+        Gdx.gl.glClearColor(0.4f, 0.6f, 0.9f, 1.0f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        world.step(1 / 60f, 60, 20);
+
         actor.update();
         camera.position.x = actor.b2Body.getWorldCenter().x;
         camera.update();
-        batch.setProjectionMatrix(camera.combined);
 
-        world.step(1 / 60f, 60, 20);
-        Gdx.gl.glClearColor(0.4f, 0.6f, 0.9f, 1.0f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
+        batch.setProjectionMatrix(camera.combined);
         background.draw(batch);
         actor.draw(batch);
         batch.end();
@@ -90,7 +92,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-        batch.dispose();
         background.getTexture().dispose();
+        batch.dispose();
+        actor.dispose();
     }
 }

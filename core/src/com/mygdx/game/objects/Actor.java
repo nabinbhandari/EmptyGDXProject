@@ -43,7 +43,14 @@ public class Actor extends Sprite {
         b2Body.createFixture(fDef);
     }
 
+    private boolean isAlive() {
+        return b2Body.getPosition().y > 0;
+    }
+
     public void update() {
+        if (!isAlive()) {
+            init();
+        }
         if (Gdx.input.isTouched()) {
             float screenX = Gdx.input.getX();
             if (screenX < Gdx.graphics.getWidth() / 3) {
@@ -69,5 +76,9 @@ public class Actor extends Sprite {
         if (b2Body.getLinearVelocity().x > -2) {
             b2Body.applyLinearImpulse(new Vector2(-1.5f, 0), b2Body.getWorldCenter(), true);
         }
+    }
+
+    public void dispose() {
+        getTexture().dispose();
     }
 }
