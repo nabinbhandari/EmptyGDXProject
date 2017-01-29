@@ -18,16 +18,13 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
-    SpriteBatch batch;
-    Sprite background;
-    World world;
-    Box2DDebugRenderer b2dr;
-    Body body;
-    OrthographicCamera camera;
-
-    float screenWidth, screenHeight;
-
-    Actor actor;
+    private float screenWidth, screenHeight;
+    private SpriteBatch batch;
+    private Sprite background;
+    private World world;
+    private Box2DDebugRenderer b2dr;
+    private OrthographicCamera camera;
+    private Actor actor;
 
     @Override
     public void create() {
@@ -36,43 +33,46 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
 
         batch = new SpriteBatch();
         background = new Sprite(new Texture("background.png"));
-        world = new World(new Vector2(0, -200), true);
+        world = new World(new Vector2(0, -400), true);
         b2dr = new Box2DDebugRenderer();
-        camera = new OrthographicCamera(500f, 500f * screenHeight / screenWidth);
-        camera.position.set(250, 250 * screenHeight / screenWidth, 0);
+        camera = new OrthographicCamera(800f, 800f * screenHeight / screenWidth);
+        camera.position.set(400, 400 * screenHeight / screenWidth, 0);
         camera.update();
 
-        BodyDef bdef = new BodyDef();
-        PolygonShape shape = new PolygonShape();
-        FixtureDef fdef = new FixtureDef();
-
-        Rectangle rect = new Rectangle(0, 0, background.getWidth(), 50);
-
-        bdef.type = BodyDef.BodyType.StaticBody;
-        bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
-
-        body = world.createBody(bdef);
-
-        shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
-        fdef.shape = shape;
-        body.createFixture(fdef);
+        createGround();
 
         actor = new Actor(world);
         Gdx.input.setInputProcessor(this);
     }
 
+    private void createGround() {
+        BodyDef bDef = new BodyDef();
+        bDef.type = BodyDef.BodyType.StaticBody;
+
+        Rectangle rect = new Rectangle(0, 0, background.getWidth(), 50);
+        bDef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
+        Body ground = world.createBody(bDef);
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
+        FixtureDef fDef = new FixtureDef();
+        fDef.shape = shape;
+        ground.createFixture(fDef);
+    }
+
     @Override
     public void render() {
+        actor.update();
         camera.position.x = actor.b2Body.getWorldCenter().x;
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
         world.step(1 / 60f, 6, 2);
-        // Sets the clear screen color to: Cornflower Blue
-        Gdx.gl.glClearColor(0x64 / 255.0f, 0x95 / 255.0f, 0xed / 255.0f, 0xff / 255.0f);
+        Gdx.gl.glClearColor(0.4f, 0.6f, 0.9f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         background.draw(batch);
+        actor.draw(batch);
         batch.end();
         b2dr.render(world, camera.combined);
     }

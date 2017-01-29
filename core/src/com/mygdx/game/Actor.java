@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -19,6 +20,7 @@ public class Actor extends Sprite {
     Body b2Body;
 
     public Actor(World world) {
+        super(new Texture("bunny.png"));
         this.world = world;
         init();
     }
@@ -31,10 +33,14 @@ public class Actor extends Sprite {
 
         FixtureDef fDef = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(40);
+        shape.setRadius(80);
 
         fDef.shape = shape;
         b2Body.createFixture(fDef);
+    }
+
+    public void update() {
+        setPosition(b2Body.getPosition().x - 80, b2Body.getPosition().y - 80);
     }
 
     public void jump() {
@@ -43,9 +49,9 @@ public class Actor extends Sprite {
 
     public void move(boolean forward) {
         if (forward) {
-            b2Body.applyLinearImpulse(new Vector2(50, 0), b2Body.getWorldCenter(), true);
+            b2Body.applyLinearImpulse(new Vector2(200, 0), b2Body.getWorldCenter(), true);
         } else {
-            b2Body.applyLinearImpulse(new Vector2(-50, 0), b2Body.getWorldCenter(), true);
+            b2Body.applyLinearImpulse(new Vector2(-200, 0), b2Body.getWorldCenter(), true);
         }
     }
 }
