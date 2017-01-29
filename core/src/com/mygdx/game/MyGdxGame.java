@@ -26,6 +26,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
     float screenWidth, screenHeight;
 
+    Actor actor;
+
     @Override
     public void create() {
         screenWidth = Gdx.graphics.getWidth();
@@ -33,7 +35,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
         batch = new SpriteBatch();
         background = new Sprite(new Texture("background.png"));
-        world = new World(new Vector2(0, 10), true);
+        world = new World(new Vector2(0, -200), true);
         b2dr = new Box2DDebugRenderer();
         camera = new OrthographicCamera(500f, 500f * screenHeight / screenWidth);
         camera.position.set(250, 250 * screenHeight / screenWidth, 0);
@@ -54,10 +56,13 @@ public class MyGdxGame extends ApplicationAdapter {
         shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
         fdef.shape = shape;
         body.createFixture(fdef);
+
+        actor = new Actor(world);
     }
 
     @Override
     public void render() {
+        world.step(1 / 60f, 6, 2);
         // Sets the clear screen color to: Cornflower Blue
         Gdx.gl.glClearColor(0x64 / 255.0f, 0x95 / 255.0f, 0xed / 255.0f, 0xff / 255.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
