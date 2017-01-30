@@ -16,18 +16,22 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.objects.Actor;
+import com.mygdx.game.objects.Coin;
 import com.mygdx.game.objects.Fish;
 
 public class MyGdxGame extends ApplicationAdapter {
     private float screenHeight;
     private SpriteBatch batch;
-    private Sprite background;
-    private World world;
     private Box2DDebugRenderer b2dr;
     private OrthographicCamera camera;
     private Actor actor;
-    public static Fish fish;
+
+    private Fish fish;
+    private Sprite background;
+    private Array<Coin> coins;
+    public World world;
 
     @Override
     public void create() {
@@ -46,8 +50,11 @@ public class MyGdxGame extends ApplicationAdapter {
         camera.update();
 
         createGround();
-        actor = new Actor(world);
-        fish = new Fish(world);
+        actor = new Actor(this);
+        fish = new Fish(this, 7, 1);
+        coins = new Array<Coin>();
+        coins.addAll(new Coin(this, 3, 2), new Coin(this, 4, 2));
+
         InputAdapter inputAdapter = new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -58,6 +65,13 @@ public class MyGdxGame extends ApplicationAdapter {
             }
         };
         Gdx.input.setInputProcessor(inputAdapter);
+    }
+
+    public void resetObjects() {
+        actor.reset();
+        fish.reset();
+        coins.get(0).reset();
+        coins.get(1).reset();
     }
 
     private void createGround() {
@@ -83,6 +97,7 @@ public class MyGdxGame extends ApplicationAdapter {
         world.step(1 / 60f, 60, 20);
 
         actor.update();
+        fish.update();
         camera.position.x = actor.b2Body.getWorldCenter().x;
         camera.update();
 
@@ -91,6 +106,9 @@ public class MyGdxGame extends ApplicationAdapter {
         background.draw(batch);
         actor.draw(batch);
         fish.draw(batch);
+        for (Coin coin : coins) {
+            coin.draw(batch);
+        }
         batch.end();
         b2dr.render(world, camera.combined);
     }

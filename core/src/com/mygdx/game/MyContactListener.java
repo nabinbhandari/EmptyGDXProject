@@ -22,7 +22,7 @@ class MyContactListener implements ContactListener {
         if (fixtureA.getUserData() == "actor" || fixtureB.getUserData() == "actor") {
             Fixture object = fixtureA.getUserData() == "actor" ? fixtureB : fixtureA;
             if (object.getUserData() != null && object.getUserData() instanceof InteractiveObject) {
-                ((InteractiveObject) object.getUserData()).onCollide();
+                ((InteractiveObject) object.getUserData()).onCollideWithActor();
             }
         }
     }

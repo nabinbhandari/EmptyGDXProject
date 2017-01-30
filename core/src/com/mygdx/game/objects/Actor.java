@@ -19,20 +19,24 @@ import com.mygdx.game.MyGdxGame;
  */
 
 public class Actor extends Sprite {
+    private MyGdxGame myGdxGame;
     private World world;
     public Body b2Body;
 
-    public Actor(World world) {
+    private boolean setToDestroy;
+
+    public Actor(MyGdxGame myGdxGame) {
         super(new Texture("bunny.png"));
         setScale(1 / Constants.PPM);
-        this.world = world;
+        this.myGdxGame = myGdxGame;
+        this.world = myGdxGame.world;
         init();
     }
 
     private void init() {
         BodyDef bDef = new BodyDef();
-        bDef.position.set(2, 2);
         bDef.type = BodyDef.BodyType.DynamicBody;
+        bDef.position.set(2, 2);
         b2Body = world.createBody(bDef);
 
         FixtureDef fDef = new FixtureDef();
@@ -43,6 +47,11 @@ public class Actor extends Sprite {
         fDef.friction = 0.5f;
 
         b2Body.createFixture(fDef).setUserData("actor");
+        setToDestroy = false;
+    }
+
+    public void reset() {
+        setToDestroy = true;
     }
 
     private boolean isAlive() {
@@ -50,9 +59,12 @@ public class Actor extends Sprite {
     }
 
     public void update() {
-        if (!isAlive()) {
+        if (setToDestroy) {
+            world.destroyBody(b2Body);
             init();
-            MyGdxGame.fish.consumed = false;
+        }
+        if (!isAlive()) {
+            myGdxGame.resetObjects();
         }
         if (Gdx.input.isTouched()) {
             float screenX = Gdx.input.getX();
