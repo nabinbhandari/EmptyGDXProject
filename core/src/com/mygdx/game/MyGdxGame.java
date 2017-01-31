@@ -42,7 +42,7 @@ public class MyGdxGame extends ApplicationAdapter {
         background = new Sprite(new Texture("background.png"));
         background.setOrigin(0, 0);
         background.setScale(1 / Constants.PPM);
-        world = new World(new Vector2(0, -10f), true);
+        world = new World(new Vector2(0, -15f), true);
         world.setContactListener(new MyContactListener());
         b2dr = new Box2DDebugRenderer();
         camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT * screenHeight / screenWidth);
@@ -58,7 +58,7 @@ public class MyGdxGame extends ApplicationAdapter {
         InputAdapter inputAdapter = new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (screenY < screenHeight / 2 && actor.b2Body.getLinearVelocity().y == 0) {
+                if (screenY > screenHeight / 2 && actor.b2Body.getLinearVelocity().y == 0) {
                     actor.jump();
                 }
                 return true;
@@ -86,7 +86,7 @@ public class MyGdxGame extends ApplicationAdapter {
         shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
         FixtureDef fDef = new FixtureDef();
         fDef.shape = shape;
-        fDef.friction = 0.5f;
+        fDef.friction = 0.2f;
         ground.createFixture(fDef);
     }
 

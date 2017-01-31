@@ -78,7 +78,7 @@ public class Actor extends Sprite {
     }
 
     public void jump() {
-        b2Body.applyLinearImpulse(new Vector2(0, 5), b2Body.getWorldCenter(), true);
+        b2Body.applyLinearImpulse(new Vector2(0, 5.5f), b2Body.getWorldCenter(), true);
     }
 
     private void moveForward() {
