@@ -3,9 +3,11 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -20,8 +22,10 @@ public class MyGdxGame extends ApplicationAdapter {
     public World world;
     public static float backgroundWidth = 0;
 
-    private float screenHeight;
-    private SpriteBatch batch;
+    public int score = 0;
+    private BitmapFont font;
+    private float screenWidth, screenHeight;
+    private SpriteBatch batch, fontBatch;
     private Box2DDebugRenderer b2dr;
     private OrthographicCamera camera;
     private Actor actor;
@@ -32,13 +36,16 @@ public class MyGdxGame extends ApplicationAdapter {
 
     @Override
     public void create() {
-        float screenWidth = Gdx.graphics.getWidth();
+        screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
-
+        font = new BitmapFont();
+        font.getData().setScale(2);
+        font.setColor(Color.RED);
         backGroundTexture = new Texture("background.png");
         backgroundWidth = backGroundTexture.getWidth() / Constants.PPM;
 
         batch = new SpriteBatch();
+        fontBatch = new SpriteBatch();
         world = new World(new Vector2(0, -15f), true);
         background1 = new Background(world, backGroundTexture, 0);
         background2 = new Background(world, backGroundTexture, backgroundWidth);
@@ -66,6 +73,7 @@ public class MyGdxGame extends ApplicationAdapter {
     }
 
     public void resetObjects() {
+        score = 0;
         actor.reset();
         fish.reset();
         coins.get(0).reset();
@@ -100,13 +108,20 @@ public class MyGdxGame extends ApplicationAdapter {
             coin.draw(batch);
         }
         batch.end();
+        fontBatch.begin();
+        font.draw(fontBatch, "Score: " + score, screenWidth - 150, screenHeight - 20);
+        fontBatch.end();
         b2dr.render(world, camera.combined);
     }
 
     @Override
     public void dispose() {
         actor.dispose();
+        fish.getTexture().dispose();
+        coins.get(0).getTexture().dispose();
+        coins.get(1).getTexture().dispose();
         backGroundTexture.dispose();
+        font.dispose();
         batch.dispose();
         world.dispose();
     }

@@ -28,7 +28,7 @@ public class Fish extends InteractiveObject {
         bDef.position.set(initX, initY);
         bDef.type = BodyDef.BodyType.KinematicBody;
         b2Body = world.createBody(bDef);
-        b2Body.setLinearVelocity(-1f, 0);
+        b2Body.setLinearVelocity(-2f, 0);
 
         FixtureDef fDef = new FixtureDef();
         PolygonShape shape = new PolygonShape();

@@ -60,5 +60,6 @@ public class Coin extends InteractiveObject {
     @Override
     public void onCollideWithActor() {
         consumed = true;
+        myGdxGame.score ++;
     }
 }
