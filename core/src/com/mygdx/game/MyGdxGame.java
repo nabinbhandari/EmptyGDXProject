@@ -82,6 +82,9 @@ public class MyGdxGame extends ApplicationAdapter {
         batch.begin();
         background1.update(batch, camera.position.x);
         background2.update(batch, camera.position.x);
+        if (actor.b2Body.getPosition().x - fish.b2Body.getPosition().x > backgroundWidth / 2) {
+            fish.resetPosition(actor.b2Body.getPosition().x + (float) (4 + Math.random() * 5));
+        }
         actor.update();
         fish.update();
         camera.position.x = actor.b2Body.getWorldCenter().x;

@@ -19,7 +19,7 @@ public abstract class InteractiveObject extends Sprite {
     World world;
     boolean consumed = false;
     BodyDef bDef = new BodyDef();
-    Body b2Body;
+    public Body b2Body;
 
     InteractiveObject(Texture texture) {
         super(texture);

@@ -54,7 +54,6 @@ public class Background extends Sprite implements Disposable {
     public void update(SpriteBatch batch, float cameraX) {
         draw(batch);
         if (cameraX - currentX > MyGdxGame.backgroundWidth * 1.5 || setToDestroy) {
-            System.out.println(cameraX + " " + currentX + " " + MyGdxGame.backgroundWidth);
             world.destroyBody(b2Body);
             currentX += 2 * MyGdxGame.backgroundWidth;
             createGround();

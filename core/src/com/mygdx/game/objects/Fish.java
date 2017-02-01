@@ -26,7 +26,7 @@ public class Fish extends InteractiveObject {
         init(initX, initY);
     }
 
-    private void init(int initX, int initY) {
+    private void init(float initX, float initY) {
         bDef.position.set(initX, initY);
         bDef.type = BodyDef.BodyType.KinematicBody;
         b2Body = world.createBody(bDef);
@@ -49,6 +49,11 @@ public class Fish extends InteractiveObject {
     public void reset() {
         super.reset();
         setToDestroy = true;
+    }
+
+    public void resetPosition(float x){
+        world.destroyBody(b2Body);
+        init(x, 1);
     }
 
     public void update() {
