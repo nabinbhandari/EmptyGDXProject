@@ -44,8 +44,8 @@ public class MyGdxGame extends ApplicationAdapter {
         background2 = new Background(world, backGroundTexture, backgroundWidth);
         world.setContactListener(new MyContactListener());
         b2dr = new Box2DDebugRenderer();
-        camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT * screenHeight / screenWidth);
-        camera.position.set(Constants.VIEWPORT_WIDTH / 2, Constants.VIEWPORT_HEIGHT / 2 * screenHeight / screenWidth, 0);
+        camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_WIDTH * screenHeight / screenWidth);
+        camera.position.set(Constants.VIEWPORT_WIDTH / 2, Constants.VIEWPORT_WIDTH / 2 * screenHeight / screenWidth, 0);
         camera.update();
 
         actor = new Actor(this);
