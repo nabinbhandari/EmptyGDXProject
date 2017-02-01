@@ -6,50 +6,48 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.objects.Actor;
+import com.mygdx.game.objects.Background;
 import com.mygdx.game.objects.Coin;
 import com.mygdx.game.objects.Fish;
 
 public class MyGdxGame extends ApplicationAdapter {
+    public World world;
+    public static float backgroundWidth = 0;
+
     private float screenHeight;
     private SpriteBatch batch;
     private Box2DDebugRenderer b2dr;
     private OrthographicCamera camera;
     private Actor actor;
-
     private Fish fish;
-    private Sprite background;
+    private Background background1, background2;
     private Array<Coin> coins;
-    public World world;
+    private Texture backGroundTexture;
 
     @Override
     public void create() {
         float screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
 
+        backGroundTexture = new Texture("background.png");
+        backgroundWidth = backGroundTexture.getWidth() / Constants.PPM;
+
         batch = new SpriteBatch();
-        background = new Sprite(new Texture("background.png"));
-        background.setOrigin(0, 0);
-        background.setScale(1 / Constants.PPM);
         world = new World(new Vector2(0, -15f), true);
+        background1 = new Background(world, backGroundTexture, 0);
+        background2 = new Background(world, backGroundTexture, backgroundWidth);
         world.setContactListener(new MyContactListener());
         b2dr = new Box2DDebugRenderer();
         camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT * screenHeight / screenWidth);
         camera.position.set(Constants.VIEWPORT_WIDTH / 2, Constants.VIEWPORT_HEIGHT / 2 * screenHeight / screenWidth, 0);
         camera.update();
 
-        createGround();
         actor = new Actor(this);
         fish = new Fish(this, 7, 1);
         coins = new Array<Coin>();
@@ -72,22 +70,8 @@ public class MyGdxGame extends ApplicationAdapter {
         fish.reset();
         coins.get(0).reset();
         coins.get(1).reset();
-    }
-
-    private void createGround() {
-        BodyDef bDef = new BodyDef();
-        bDef.type = BodyDef.BodyType.StaticBody;
-
-        Rectangle rect = new Rectangle(0, 0, background.getWidth() * background.getScaleX(), .5f);
-        bDef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
-        Body ground = world.createBody(bDef);
-
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
-        FixtureDef fDef = new FixtureDef();
-        fDef.shape = shape;
-        fDef.friction = 0.2f;
-        ground.createFixture(fDef);
+        background1.reset(0);
+        background2.reset(backgroundWidth);
     }
 
     @Override
@@ -103,7 +87,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
         batch.begin();
         batch.setProjectionMatrix(camera.combined);
-        background.draw(batch);
+        background1.update(batch, camera.position.x);
+        background2.update(batch, camera.position.x);
         actor.draw(batch);
         fish.draw(batch);
         for (Coin coin : coins) {
@@ -115,8 +100,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-        background.getTexture().dispose();
         actor.dispose();
+        backGroundTexture.dispose();
         batch.dispose();
         world.dispose();
     }
