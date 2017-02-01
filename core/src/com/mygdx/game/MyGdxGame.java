@@ -79,16 +79,14 @@ public class MyGdxGame extends ApplicationAdapter {
         Gdx.gl.glClearColor(0.4f, 0.6f, 0.9f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         world.step(1 / 60f, 60, 20);
-
+        batch.begin();
+        background1.update(batch, camera.position.x);
+        background2.update(batch, camera.position.x);
         actor.update();
         fish.update();
         camera.position.x = actor.b2Body.getWorldCenter().x;
         camera.update();
-
-        batch.begin();
         batch.setProjectionMatrix(camera.combined);
-        background1.update(batch, camera.position.x);
-        background2.update(batch, camera.position.x);
         actor.draw(batch);
         fish.draw(batch);
         for (Coin coin : coins) {
