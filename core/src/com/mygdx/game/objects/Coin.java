@@ -24,7 +24,7 @@ public class Coin extends InteractiveObject {
         init(initX, initY);
     }
 
-    private void init(int initX, int initY) {
+    private void init(float initX, float initY) {
         bDef.position.set(initX, initY);
         bDef.type = BodyDef.BodyType.StaticBody;
         b2Body = world.createBody(bDef);
@@ -38,6 +38,22 @@ public class Coin extends InteractiveObject {
         Fixture fixture = b2Body.createFixture(fDef);
         fixture.setUserData(this);
 
+        setPosition(b2Body.getPosition().x - getWidth() / 2, b2Body.getPosition().y - getHeight() / 2);
+        setToDestroy = false;
+        consumed = false;
+    }
+
+    public void resetPosition(float x) {
+        world.destroyBody(b2Body);
+        init(x, (float) (1 + Math.random()));
+    }
+
+    public void update() {
+        if (setToDestroy) {
+            resetPosition(3 + (float) (Math.random() * 5));
+        } else if (consumed) {
+            resetPosition(b2Body.getPosition().x + 1 + (float) (Math.random() * 5));
+        }
         setPosition(b2Body.getPosition().x - getWidth() / 2, b2Body.getPosition().y - getHeight() / 2);
     }
 

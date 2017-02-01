@@ -18,6 +18,8 @@ public abstract class InteractiveObject extends Sprite {
     MyGdxGame myGdxGame;
     World world;
     boolean consumed = false;
+    boolean setToDestroy = false;
+
     BodyDef bDef = new BodyDef();
     public Body b2Body;
 
@@ -33,7 +35,7 @@ public abstract class InteractiveObject extends Sprite {
     }
 
     public void reset() {
-        consumed = false;
+        setToDestroy = true;
     }
 
     public abstract void onCollideWithActor();

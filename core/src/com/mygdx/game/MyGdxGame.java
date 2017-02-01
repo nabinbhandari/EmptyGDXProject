@@ -93,6 +93,10 @@ public class MyGdxGame extends ApplicationAdapter {
         actor.draw(batch);
         fish.draw(batch);
         for (Coin coin : coins) {
+            if (actor.b2Body.getPosition().x - coin.b2Body.getPosition().x > backgroundWidth / 2) {
+                coin.resetPosition(actor.b2Body.getPosition().x + 1 + (float) (Math.random() * 5));
+            }
+            coin.update();
             coin.draw(batch);
         }
         batch.end();

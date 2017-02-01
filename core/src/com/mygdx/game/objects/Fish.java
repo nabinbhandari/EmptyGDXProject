@@ -16,8 +16,6 @@ import com.mygdx.game.MyGdxGame;
 
 public class Fish extends InteractiveObject {
 
-    private boolean setToDestroy;
-
     public Fish(MyGdxGame myGdxGame, int initX, int initY) {
         super(new Texture("fish.png"));
         setScale(1 / Constants.PPM / 4);
@@ -30,7 +28,7 @@ public class Fish extends InteractiveObject {
         bDef.position.set(initX, initY);
         bDef.type = BodyDef.BodyType.KinematicBody;
         b2Body = world.createBody(bDef);
-        b2Body.setLinearVelocity(-2f, 0);
+        b2Body.setLinearVelocity(-1f, 0);
 
         FixtureDef fDef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
@@ -43,12 +41,6 @@ public class Fish extends InteractiveObject {
 
         setFlip(true, false);
         setToDestroy = false;
-    }
-
-    @Override
-    public void reset() {
-        super.reset();
-        setToDestroy = true;
     }
 
     public void resetPosition(float x){
@@ -66,7 +58,6 @@ public class Fish extends InteractiveObject {
 
     @Override
     public void onCollideWithActor() {
-        consumed = true;
         myGdxGame.resetObjects();
     }
 }
