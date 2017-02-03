@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -64,6 +65,14 @@ public class MyGdxGame extends ApplicationAdapter {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 if (screenY > screenHeight / 2 && actor.b2Body.getLinearVelocity().y == 0) {
+                    actor.jump();
+                }
+                return true;
+            }
+
+            @Override
+            public boolean keyDown(int keycode) {
+                if(keycode == Input.Keys.UP){
                     actor.jump();
                 }
                 return true;

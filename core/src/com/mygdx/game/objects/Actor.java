@@ -1,6 +1,7 @@
 package com.mygdx.game.objects;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -73,6 +74,11 @@ public class Actor extends Sprite {
             } else if (screenX > Gdx.graphics.getWidth() * 2 / 3) {
                 moveForward();
             }
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            moveForward();
+        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            moveBackward();
         }
         setPosition(b2Body.getPosition().x - getWidth() / 2, b2Body.getPosition().y - getHeight() / 2);
     }
