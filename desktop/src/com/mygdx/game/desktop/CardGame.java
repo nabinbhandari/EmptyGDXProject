@@ -25,7 +25,7 @@ public class CardGame {
 
     private void init() {
         for (int i = 0; i <= 51; i++) {
-            cardsInDeck.add(Card.newCardFromId(i));
+            cardsInDeck.add(new Card(i));
         }
         Collections.shuffle(cardsInDeck);
     }

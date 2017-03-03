@@ -8,55 +8,50 @@ import java.util.HashMap;
  * @author Nabin Bhandari
  */
 public class Card {
-    public class Color {
-        public static final int SPADE = 0, HEART = 1, CLUB = 2, DIAMOND = 3;
-    }
-
     private static HashMap<Integer, Character> cardMap = new HashMap<Integer, Character>();
 
     static {
-        cardMap.put(Color.SPADE, 'S');
-        cardMap.put(Color.HEART, 'H');
-        cardMap.put(Color.CLUB, 'C');
-        cardMap.put(Color.DIAMOND, 'D');
+        cardMap.put(0, 'S');
+        cardMap.put(1, 'H');
+        cardMap.put(2, 'C');
+        cardMap.put(3, 'D');
     }
 
-    public static Card newCardFromId(int id) {
-        int color = id / 13;
-        int index = id % 13;
+    public int id;
+    public int index;
+    public int color;
+    public char cardChar;
 
+    public Card(int id) {
+        this.id = id;
+        index = id % 13;
+        color = id / 13;
+        cardChar = getCardChar();
+    }
+
+    private char getCardChar() {
         if (index > 1 && index < 10) {
-            return new Card(id, color, (char) (48 + index));
+            return (char) (48 + index);
         } else {
             switch (index) {
                 case 0:
-                    return new Card(id, color, 'K');
+                    return 'K';
                 case 1:
-                    return new Card(id, color, 'A');
+                    return 'A';
                 case 10:
-                    return new Card(id, color, 'T');
+                    return 'T';
                 case 11:
-                    return new Card(id, color, 'J');
+                    return 'J';
                 case 12:
-                    return new Card(id, color, 'Q');
+                    return 'Q';
                 default:
-                    return null;
+                    return '!';
             }
         }
     }
 
-    public int id;
-    public int color;
-    public char card;
-
-    private Card(int id, int color, char card) {
-        this.id = id;
-        this.color = color;
-        this.card = card;
-    }
-
     @Override
     public String toString() {
-        return card + "" + cardMap.get(color);
+        return cardChar + "" + cardMap.get(color);
     }
 }
