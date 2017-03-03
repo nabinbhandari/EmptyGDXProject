@@ -25,6 +25,15 @@ public class Player {
         return cards;
     }
 
+    public List<Card> collectCards() {
+        List<Card> cardList = new ArrayList<Card>();
+        for (Card card : cards) {
+            cardList.add(card);
+        }
+        cards.clear();
+        return cardList;
+    }
+
     @SuppressWarnings("Since15")
     public void sort() {
         cards.sort(new Comparator<Card>() {
