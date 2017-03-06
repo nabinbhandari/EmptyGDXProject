@@ -43,7 +43,7 @@ public class Actor {
         shape.setAsBox(.3f, .5f);
         fDef.shape = shape;
         fDef.density = 10;
-        b2Body.createFixture(fDef).setUserData("actor");
+        b2Body.createFixture(fDef).setUserData(this);
 
         shape = new PolygonShape();
         shape.setAsBox(.1f, .3f);

@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.objects.Actor;
 import com.mygdx.game.objects.Background;
+import com.mygdx.game.objects.Fish;
 
 public class MyGdxGame extends ApplicationAdapter {
     public World world;
@@ -24,6 +25,8 @@ public class MyGdxGame extends ApplicationAdapter {
     private Actor actor;
     private Background background1, background2;
     private Texture backGroundTexture;
+
+    private Fish fish;
 
     @Override
     public void create() {
@@ -42,6 +45,8 @@ public class MyGdxGame extends ApplicationAdapter {
         camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_WIDTH * screenHeight / screenWidth);
         camera.position.set(Constants.VIEWPORT_WIDTH / 2, Constants.VIEWPORT_WIDTH / 2 * screenHeight / screenWidth, 0);
         camera.update();
+
+        fish = new Fish(this, 7, 1);
 
         actor = new Actor(this);
 
@@ -72,6 +77,8 @@ public class MyGdxGame extends ApplicationAdapter {
         background1.update(camera.position.x);
         background2.update(camera.position.x);
         actor.update();
+        fish.update();
+        fish.draw(batch);
         camera.position.x = actor.b2Body.getWorldCenter().x;
         camera.update();
         batch.setProjectionMatrix(camera.combined);

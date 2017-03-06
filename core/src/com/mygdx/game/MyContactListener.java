@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.mygdx.game.objects.Actor;
 import com.mygdx.game.objects.InteractiveObject;
 
 /**
@@ -19,8 +20,8 @@ class MyContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-        if (fixtureA.getUserData() == "actor" || fixtureB.getUserData() == "actor") {
-            Fixture object = fixtureA.getUserData() == "actor" ? fixtureB : fixtureA;
+        if (fixtureA.getUserData() instanceof Actor || fixtureB.getUserData() instanceof Actor) {
+            Fixture object = fixtureA.getUserData() instanceof Actor ? fixtureB : fixtureA;
             if (object.getUserData() != null && object.getUserData() instanceof InteractiveObject) {
                 ((InteractiveObject) object.getUserData()).onCollideWithActor();
             }
