@@ -20,9 +20,11 @@ import com.mygdx.game.MyGdxGame;
 public class Actor {
     private MyGdxGame myGdxGame;
     private World world;
-    public Body b2Body, arm, stone;
+    public Body b2Body;
+    private Body arm, stone;
 
-    private boolean setToDestroy;
+    private boolean setToDestroy, setToDestroyJoint;
+    private RevoluteJoint joint;
 
     public Actor(MyGdxGame myGdxGame) {
         this.myGdxGame = myGdxGame;
@@ -35,20 +37,20 @@ public class Actor {
         bDef.type = BodyDef.BodyType.DynamicBody;
         bDef.position.set(2, 2);
         b2Body = world.createBody(bDef);
-        bDef.position.set(2, 1);
+        bDef.position.set(2, 2);
         arm = world.createBody(bDef);
 
         FixtureDef fDef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(.3f, .5f);
         fDef.shape = shape;
-        fDef.density = 10;
+        fDef.density = 1;
         b2Body.createFixture(fDef).setUserData(this);
 
         shape = new PolygonShape();
         shape.setAsBox(.1f, .3f);
         fDef.shape = shape;
-        fDef.density = 5;
+        fDef.density = .5f;
         fDef.isSensor = true;
         arm.createFixture(fDef).setUserData("arm");
 
@@ -64,10 +66,10 @@ public class Actor {
 
         jointDef.collideConnected = false;
 
-        RevoluteJoint joint = (RevoluteJoint) world.createJoint(jointDef);
+        joint = (RevoluteJoint) world.createJoint(jointDef);
         joint.setMotorSpeed(5);
         setToDestroy = false;
-
+        setToDestroyJoint = false;
 
         BodyDef bDef2 = new BodyDef();
         bDef2.position.set(4, 2);
@@ -91,6 +93,10 @@ public class Actor {
     }
 
     public void update() {
+        if (setToDestroyJoint) {
+            world.destroyJoint(joint);
+            setToDestroyJoint = false;
+        }
         if (setToDestroy) {
             world.destroyBody(b2Body);
             world.destroyBody(arm);
@@ -124,5 +130,9 @@ public class Actor {
         if (b2Body.getLinearVelocity().x > -2) {
             b2Body.applyLinearImpulse(new Vector2(-1.5f, 0), b2Body.getWorldCenter().add(0, 0.2f), true);
         }
+    }
+
+    void destroyJoints() {
+        setToDestroyJoint = true;
     }
 }

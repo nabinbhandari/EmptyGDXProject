@@ -22,7 +22,7 @@ public class MyGdxGame extends ApplicationAdapter {
     private SpriteBatch batch;
     private Box2DDebugRenderer b2dr;
     private OrthographicCamera camera;
-    private Actor actor;
+    public Actor actor;
     private Background background1, background2;
     private Texture backGroundTexture;
 
@@ -64,6 +64,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
     public void resetObjects() {
         actor.reset();
+        fish.reset();
         background1.reset(0);
         background2.reset(backgroundWidth);
     }
