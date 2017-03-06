@@ -23,7 +23,7 @@ public class Actor {
     public Body b2Body;
     private Body arm, stone;
 
-    private boolean setToDestroy, setToDestroyJoint;
+    private boolean setToDestroy, setToDestroyJoint, jointNotDestroyed;
     private RevoluteJoint joint;
 
     public Actor(MyGdxGame myGdxGame) {
@@ -51,7 +51,6 @@ public class Actor {
         shape.setAsBox(.1f, .3f);
         fDef.shape = shape;
         fDef.density = .5f;
-        fDef.isSensor = true;
         arm.createFixture(fDef).setUserData("arm");
 
         RevoluteJointDef jointDef = new RevoluteJointDef();
@@ -70,6 +69,7 @@ public class Actor {
         joint.setMotorSpeed(5);
         setToDestroy = false;
         setToDestroyJoint = false;
+        jointNotDestroyed = true;
 
         BodyDef bDef2 = new BodyDef();
         bDef2.position.set(4, 2);
@@ -96,6 +96,7 @@ public class Actor {
         if (setToDestroyJoint) {
             world.destroyJoint(joint);
             setToDestroyJoint = false;
+            jointNotDestroyed = false;
         }
         if (setToDestroy) {
             world.destroyBody(b2Body);
@@ -133,6 +134,8 @@ public class Actor {
     }
 
     void destroyJoints() {
-        setToDestroyJoint = true;
+        if (jointNotDestroyed) {
+            setToDestroyJoint = true;
+        }
     }
 }

@@ -63,6 +63,5 @@ public class Fish extends InteractiveObject {
     public void onCollideWithActor() {
         consumed = true;
         myGdxGame.actor.destroyJoints();
-//        myGdxGame.resetObjects();
     }
 }
