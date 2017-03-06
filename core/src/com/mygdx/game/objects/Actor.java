@@ -8,7 +8,10 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.mygdx.game.Constants;
 import com.mygdx.game.MyGdxGame;
 
@@ -21,7 +24,7 @@ import com.mygdx.game.MyGdxGame;
 public class Actor {
     private MyGdxGame myGdxGame;
     private World world;
-    public Body b2Body;
+    public Body b2Body, hangingBody;
 
     private boolean setToDestroy;
 
@@ -36,15 +39,37 @@ public class Actor {
         bDef.type = BodyDef.BodyType.DynamicBody;
         bDef.position.set(2, 2);
         b2Body = world.createBody(bDef);
+        bDef.position.set(2, 1);
+        hangingBody = world.createBody(bDef);
 
         FixtureDef fDef = new FixtureDef();
-        CircleShape shape = new CircleShape();
-        shape.setRadius(.35f);
-
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(.3f, .5f);
         fDef.shape = shape;
-        fDef.friction = 0.5f;
-
+        fDef.density = 10;
+        fDef.filter.categoryBits = 2;
         b2Body.createFixture(fDef).setUserData("actor");
+
+        shape = new PolygonShape();
+        shape.setAsBox(.1f, .3f);
+        fDef.shape = shape;
+        fDef.density = 5;
+        fDef.filter.categoryBits = 4;
+        fDef.isSensor = true;
+        hangingBody.createFixture(fDef).setUserData("hanging");
+
+        RevoluteJointDef jointDef = new RevoluteJointDef();
+        jointDef.initialize(b2Body, hangingBody, b2Body.getWorldCenter());
+
+        jointDef.localAnchorA.set(0, 0.2f);
+        jointDef.localAnchorB.set(0, 0.2f);
+
+        jointDef.maxMotorTorque = 10f;
+        jointDef.collideConnected = false;
+
+        RevoluteJoint joint = (RevoluteJoint) world.createJoint(jointDef);
+        joint.setMotorSpeed(5);
+        joint.enableMotor(true);
         setToDestroy = false;
     }
 
