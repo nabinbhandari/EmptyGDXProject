@@ -1,18 +1,14 @@
 package com.mygdx.game.objects;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
-import com.mygdx.game.Constants;
 import com.mygdx.game.MyGdxGame;
 
 /**
@@ -24,7 +20,7 @@ import com.mygdx.game.MyGdxGame;
 public class Actor {
     private MyGdxGame myGdxGame;
     private World world;
-    public Body b2Body, hangingBody;
+    public Body b2Body, arm, stone;
 
     private boolean setToDestroy;
 
@@ -40,37 +36,50 @@ public class Actor {
         bDef.position.set(2, 2);
         b2Body = world.createBody(bDef);
         bDef.position.set(2, 1);
-        hangingBody = world.createBody(bDef);
+        arm = world.createBody(bDef);
 
         FixtureDef fDef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(.3f, .5f);
         fDef.shape = shape;
         fDef.density = 10;
-        fDef.filter.categoryBits = 2;
         b2Body.createFixture(fDef).setUserData("actor");
 
         shape = new PolygonShape();
         shape.setAsBox(.1f, .3f);
         fDef.shape = shape;
         fDef.density = 5;
-        fDef.filter.categoryBits = 4;
         fDef.isSensor = true;
-        hangingBody.createFixture(fDef).setUserData("hanging");
+        arm.createFixture(fDef).setUserData("arm");
 
         RevoluteJointDef jointDef = new RevoluteJointDef();
-        jointDef.initialize(b2Body, hangingBody, b2Body.getWorldCenter());
+        jointDef.initialize(b2Body, arm, b2Body.getWorldCenter());
 
-        jointDef.localAnchorA.set(0, 0.2f);
+        jointDef.localAnchorA.set(0, 0.25f);
         jointDef.localAnchorB.set(0, 0.2f);
 
-        jointDef.maxMotorTorque = 10f;
+        jointDef.enableLimit = true;
+        jointDef.lowerAngle = -3.14f / 2;
+        jointDef.upperAngle = 3.14f / 2;
+
         jointDef.collideConnected = false;
 
         RevoluteJoint joint = (RevoluteJoint) world.createJoint(jointDef);
         joint.setMotorSpeed(5);
-        joint.enableMotor(true);
         setToDestroy = false;
+
+
+        BodyDef bDef2 = new BodyDef();
+        bDef2.position.set(4, 2);
+        bDef2.type = BodyDef.BodyType.DynamicBody;
+        stone = world.createBody(bDef2);
+
+        FixtureDef fDef2 = new FixtureDef();
+        PolygonShape shape2 = new PolygonShape();
+        shape2.setAsBox(.1f, .1f);
+        fDef2.shape = shape2;
+        fDef2.density = 100;
+        stone.createFixture(fDef2);
     }
 
     public void reset() {
@@ -84,6 +93,8 @@ public class Actor {
     public void update() {
         if (setToDestroy) {
             world.destroyBody(b2Body);
+            world.destroyBody(arm);
+            world.destroyBody(stone);
             init();
         }
         if (!isAlive()) {
@@ -105,13 +116,13 @@ public class Actor {
 
     private void moveForward() {
         if (b2Body.getLinearVelocity().x < 2) {
-            b2Body.applyLinearImpulse(new Vector2(1.5f, 0), b2Body.getWorldCenter(), true);
+            b2Body.applyLinearImpulse(new Vector2(1.5f, 0), b2Body.getWorldCenter().add(0, 0.2f), true);
         }
     }
 
     private void moveBackward() {
         if (b2Body.getLinearVelocity().x > -2) {
-            b2Body.applyLinearImpulse(new Vector2(-1.5f, 0), b2Body.getWorldCenter(), true);
+            b2Body.applyLinearImpulse(new Vector2(-1.5f, 0), b2Body.getWorldCenter().add(0, 0.2f), true);
         }
     }
 }
