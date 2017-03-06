@@ -10,11 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.objects.Actor;
 import com.mygdx.game.objects.Background;
-import com.mygdx.game.objects.Coin;
-import com.mygdx.game.objects.Fish;
 
 public class MyGdxGame extends ApplicationAdapter {
     public World world;
@@ -25,9 +22,7 @@ public class MyGdxGame extends ApplicationAdapter {
     private Box2DDebugRenderer b2dr;
     private OrthographicCamera camera;
     private Actor actor;
-    private Fish fish;
     private Background background1, background2;
-    private Array<Coin> coins;
     private Texture backGroundTexture;
 
     @Override
@@ -49,9 +44,6 @@ public class MyGdxGame extends ApplicationAdapter {
         camera.update();
 
         actor = new Actor(this);
-        fish = new Fish(this, 7, 1);
-        coins = new Array<Coin>();
-        coins.addAll(new Coin(this, 3, 2), new Coin(this, 4, 2));
 
         InputAdapter inputAdapter = new InputAdapter() {
             @Override
@@ -67,9 +59,6 @@ public class MyGdxGame extends ApplicationAdapter {
 
     public void resetObjects() {
         actor.reset();
-        fish.reset();
-        coins.get(0).reset();
-        coins.get(1).reset();
         background1.reset(0);
         background2.reset(backgroundWidth);
     }
@@ -83,15 +72,10 @@ public class MyGdxGame extends ApplicationAdapter {
         background1.update(batch, camera.position.x);
         background2.update(batch, camera.position.x);
         actor.update();
-        fish.update();
         camera.position.x = actor.b2Body.getWorldCenter().x;
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         actor.draw(batch);
-        fish.draw(batch);
-        for (Coin coin : coins) {
-            coin.draw(batch);
-        }
         batch.end();
         b2dr.render(world, camera.combined);
     }
