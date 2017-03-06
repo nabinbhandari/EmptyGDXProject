@@ -18,7 +18,7 @@ import com.mygdx.game.MyGdxGame;
  * @author Nabin.
  */
 
-public class Background extends Sprite implements Disposable {
+public class Background {
 
     private World world;
     private Body b2Body;
@@ -26,16 +26,13 @@ public class Background extends Sprite implements Disposable {
     private float currentX = 0;
     private boolean setToDestroy;
 
-    public Background(World world, Texture texture, float startX) {
-        super(texture);
+    public Background(World world, float startX) {
         this.world = world;
         this.currentX = startX;
-        setScale(1 / Constants.PPM);
         createGround();
     }
 
     private void createGround() {
-        setOrigin(currentX, 0);
         BodyDef bDef = new BodyDef();
         bDef.type = BodyDef.BodyType.StaticBody;
 
@@ -51,8 +48,7 @@ public class Background extends Sprite implements Disposable {
         setToDestroy = false;
     }
 
-    public void update(SpriteBatch batch, float cameraX) {
-        draw(batch);
+    public void update(float cameraX) {
         if (cameraX - currentX > MyGdxGame.backgroundWidth * 1.5 || setToDestroy) {
             System.out.println(cameraX + " " + currentX + " " + MyGdxGame.backgroundWidth);
             world.destroyBody(b2Body);
@@ -64,10 +60,5 @@ public class Background extends Sprite implements Disposable {
     public void reset(float startX) {
         setToDestroy = true;
         currentX = startX - 2 * MyGdxGame.backgroundWidth;
-    }
-
-    @Override
-    public void dispose() {
-        getTexture().dispose();
     }
 }

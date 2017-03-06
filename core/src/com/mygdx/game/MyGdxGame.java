@@ -35,8 +35,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
         batch = new SpriteBatch();
         world = new World(new Vector2(0, -15f), true);
-        background1 = new Background(world, backGroundTexture, 0);
-        background2 = new Background(world, backGroundTexture, backgroundWidth);
+        background1 = new Background(world, 0);
+        background2 = new Background(world, backgroundWidth);
         world.setContactListener(new MyContactListener());
         b2dr = new Box2DDebugRenderer();
         camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_WIDTH * screenHeight / screenWidth);
@@ -69,20 +69,18 @@ public class MyGdxGame extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         world.step(1 / 60f, 60, 20);
         batch.begin();
-        background1.update(batch, camera.position.x);
-        background2.update(batch, camera.position.x);
+        background1.update(camera.position.x);
+        background2.update(camera.position.x);
         actor.update();
         camera.position.x = actor.b2Body.getWorldCenter().x;
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        actor.draw(batch);
         batch.end();
         b2dr.render(world, camera.combined);
     }
 
     @Override
     public void dispose() {
-        actor.dispose();
         backGroundTexture.dispose();
         batch.dispose();
         world.dispose();

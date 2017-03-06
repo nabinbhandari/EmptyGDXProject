@@ -18,7 +18,7 @@ import com.mygdx.game.MyGdxGame;
  * @author Nabin.
  */
 
-public class Actor extends Sprite {
+public class Actor {
     private MyGdxGame myGdxGame;
     private World world;
     public Body b2Body;
@@ -26,8 +26,6 @@ public class Actor extends Sprite {
     private boolean setToDestroy;
 
     public Actor(MyGdxGame myGdxGame) {
-        super(new Texture("bunny.png"));
-        setScale(1 / Constants.PPM);
         this.myGdxGame = myGdxGame;
         this.world = myGdxGame.world;
         init();
@@ -74,7 +72,6 @@ public class Actor extends Sprite {
                 moveForward();
             }
         }
-        setPosition(b2Body.getPosition().x - getWidth() / 2, b2Body.getPosition().y - getHeight() / 2);
     }
 
     public void jump() {
@@ -91,9 +88,5 @@ public class Actor extends Sprite {
         if (b2Body.getLinearVelocity().x > -2) {
             b2Body.applyLinearImpulse(new Vector2(-1.5f, 0), b2Body.getWorldCenter(), true);
         }
-    }
-
-    public void dispose() {
-        getTexture().dispose();
     }
 }
