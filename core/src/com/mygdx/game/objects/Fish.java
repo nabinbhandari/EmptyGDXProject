@@ -30,7 +30,7 @@ public class Fish extends InteractiveObject {
         bDef.position.set(initX, initY);
         bDef.type = BodyDef.BodyType.KinematicBody;
         b2Body = world.createBody(bDef);
-        b2Body.setLinearVelocity(-2f, 0);
+        b2Body.setLinearVelocity(-1f, 0);
 
         FixtureDef fDef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
@@ -54,7 +54,7 @@ public class Fish extends InteractiveObject {
     public void update() {
         if (setToDestroy) {
             world.destroyBody(b2Body);
-            init(7, 1);
+            init(20, 0.7f);
         }
         setPosition(b2Body.getPosition().x - getWidth() / 2, b2Body.getPosition().y - getHeight() / 2);
     }

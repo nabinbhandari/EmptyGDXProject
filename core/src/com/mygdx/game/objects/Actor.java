@@ -10,6 +10,10 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
+import com.badlogic.gdx.physics.box2d.joints.WeldJoint;
+import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
+import com.badlogic.gdx.physics.box2d.joints.WheelJoint;
+import com.badlogic.gdx.physics.box2d.joints.WheelJointDef;
 import com.mygdx.game.MyGdxGame;
 
 /**
@@ -21,11 +25,13 @@ import com.mygdx.game.MyGdxGame;
 public class Actor {
     private boolean setToDestroy, setToDestroyJoint, jointNotDestroyed;
     private MyGdxGame myGdxGame;
-    private RevoluteJoint wheel1Joint, wheel2Joint;
+    private WheelJoint wheel1Joint, wheel2Joint;
+    private WeldJoint bar1Joint, bar2Joint;
     private World world;
     private Body wheel1, wheel2;
     private Body stone;
 
+    private Body bar1, bar2;
     public Body bar;
 
     public Actor(MyGdxGame myGdxGame) {
@@ -53,7 +59,7 @@ public class Actor {
         wheel2.createFixture(wheelFixture).setUserData(this);
 
         BodyDef barDef = new BodyDef();
-        barDef.position.set(3, 2);
+        barDef.position.set(3, 3);
         barDef.type = BodyDef.BodyType.DynamicBody;
         bar = world.createBody(barDef);
 
@@ -64,17 +70,34 @@ public class Actor {
         barFixture.density = 2;
         bar.createFixture(barFixture);
 
-        RevoluteJointDef wheelJointDef = new RevoluteJointDef();
-        wheelJointDef.initialize(bar, wheel1, new Vector2(2, 2));
+        barDef.position.set(2, 2.5f);
+        bar1 = world.createBody(barDef);
+        barDef.position.set(4, 2.5f);
+        bar2 = world.createBody(barDef);
+
+        barShape.setAsBox(0.05f, 0.5f);
+        bar1.createFixture(barFixture);
+        bar2.createFixture(barFixture);
+
+        WheelJointDef wheelJointDef = new WheelJointDef();
+        wheelJointDef.initialize(bar1, wheel1, new Vector2(2, 2), new Vector2(0, 1));
         wheelJointDef.collideConnected = false;
         wheelJointDef.enableMotor = true;
         wheelJointDef.motorSpeed = -3.14f;
         wheelJointDef.maxMotorTorque = 100;
-        wheel1Joint = (RevoluteJoint) world.createJoint(wheelJointDef);
+        wheelJointDef.dampingRatio = 1f;
+        wheelJointDef.frequencyHz = 4;
+        wheel1Joint = (WheelJoint) world.createJoint(wheelJointDef);
 
         wheelJointDef.enableMotor = false;
-        wheelJointDef.initialize(bar, wheel2, new Vector2(4, 2));
-        wheel2Joint = (RevoluteJoint) world.createJoint(wheelJointDef);
+        wheelJointDef.initialize(bar2, wheel2, new Vector2(4, 2), new Vector2(0, 1));
+        wheel2Joint = (WheelJoint) world.createJoint(wheelJointDef);
+
+        WeldJointDef barJointDef = new WeldJointDef();
+        barJointDef.initialize(bar1, bar, new Vector2(2, 3));
+        bar1Joint = (WeldJoint) world.createJoint(barJointDef);
+        barJointDef.initialize(bar2, bar, new Vector2(4, 3));
+        bar2Joint = (WeldJoint) world.createJoint(barJointDef);
 
         setToDestroy = false;
         setToDestroyJoint = false;
@@ -105,6 +128,8 @@ public class Actor {
         if (setToDestroyJoint) {
             world.destroyJoint(wheel1Joint);
             world.destroyJoint(wheel2Joint);
+            world.destroyJoint(bar1Joint);
+            world.destroyJoint(bar2Joint);
             setToDestroyJoint = false;
             jointNotDestroyed = false;
         }
@@ -112,10 +137,13 @@ public class Actor {
             world.destroyBody(wheel1);
             world.destroyBody(wheel2);
             world.destroyBody(bar);
+            world.destroyBody(bar1);
+            world.destroyBody(bar2);
             world.destroyBody(stone);
             init();
         }
         if (!isAlive()) {
+            System.err.println(bar.getPosition().y);
             myGdxGame.resetObjects();
         }
         if (Gdx.input.isTouched()) {

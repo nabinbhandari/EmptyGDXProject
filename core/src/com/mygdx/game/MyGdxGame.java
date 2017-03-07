@@ -46,7 +46,7 @@ public class MyGdxGame extends ApplicationAdapter {
         camera.position.set(Constants.VIEWPORT_WIDTH / 2, Constants.VIEWPORT_WIDTH / 2 * screenHeight / screenWidth, 0);
         camera.update();
 
-        fish = new Fish(this, 7, .5f);
+        fish = new Fish(this, 20, .7f);
 
         actor = new Actor(this);
 
