@@ -18,7 +18,7 @@ public class Fish extends InteractiveObject {
 
     private boolean setToDestroy;
 
-    public Fish(MyGdxGame myGdxGame, int initX, int initY) {
+    public Fish(MyGdxGame myGdxGame, float initX, float initY) {
         super(new Texture("fish.png"));
         setScale(1 / Constants.PPM / 4);
         this.myGdxGame = myGdxGame;
@@ -26,7 +26,7 @@ public class Fish extends InteractiveObject {
         init(initX, initY);
     }
 
-    private void init(int initX, int initY) {
+    private void init(float initX, float initY) {
         bDef.position.set(initX, initY);
         bDef.type = BodyDef.BodyType.KinematicBody;
         b2Body = world.createBody(bDef);

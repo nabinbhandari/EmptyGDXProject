@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -18,13 +19,14 @@ import com.mygdx.game.MyGdxGame;
  */
 
 public class Actor {
-    private MyGdxGame myGdxGame;
-    private World world;
-    public Body b2Body;
-    private Body arm, stone;
-
     private boolean setToDestroy, setToDestroyJoint, jointNotDestroyed;
-    private RevoluteJoint joint;
+    private MyGdxGame myGdxGame;
+    private RevoluteJoint wheel1Joint, wheel2Joint;
+    private World world;
+    private Body wheel1, wheel2;
+    private Body stone;
+
+    public Body bar;
 
     public Actor(MyGdxGame myGdxGame) {
         this.myGdxGame = myGdxGame;
@@ -33,46 +35,53 @@ public class Actor {
     }
 
     private void init() {
-        BodyDef bDef = new BodyDef();
-        bDef.type = BodyDef.BodyType.DynamicBody;
-        bDef.position.set(2, 2);
-        b2Body = world.createBody(bDef);
-        bDef.position.set(2, 2);
-        arm = world.createBody(bDef);
 
-        FixtureDef fDef = new FixtureDef();
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(.3f, .5f);
-        fDef.shape = shape;
-        fDef.density = 1;
-        b2Body.createFixture(fDef).setUserData(this);
+        BodyDef wheelDef = new BodyDef();
+        wheelDef.position.set(2, 2);
+        wheelDef.type = BodyDef.BodyType.DynamicBody;
+        wheel1 = world.createBody(wheelDef);
+        wheelDef.position.set(4, 2);
+        wheel2 = world.createBody(wheelDef);
 
-        shape = new PolygonShape();
-        shape.setAsBox(.1f, .3f);
-        fDef.shape = shape;
-        fDef.density = .5f;
-        arm.createFixture(fDef).setUserData("arm");
+        CircleShape wheelShape = new CircleShape();
+        wheelShape.setRadius(0.5f);
+        FixtureDef wheelFixture = new FixtureDef();
+        wheelFixture.shape = wheelShape;
+        wheelFixture.density = 1;
 
-        RevoluteJointDef jointDef = new RevoluteJointDef();
-        jointDef.initialize(b2Body, arm, b2Body.getWorldCenter());
+        wheel1.createFixture(wheelFixture);
+        wheel2.createFixture(wheelFixture).setUserData(this);
 
-        jointDef.localAnchorA.set(0, 0.25f);
-        jointDef.localAnchorB.set(0, 0.2f);
+        BodyDef barDef = new BodyDef();
+        barDef.position.set(3, 2);
+        barDef.type = BodyDef.BodyType.DynamicBody;
+        bar = world.createBody(barDef);
 
-        jointDef.enableLimit = true;
-        jointDef.lowerAngle = -3.14f / 2;
-        jointDef.upperAngle = 3.14f / 2;
+        PolygonShape barShape = new PolygonShape();
+        barShape.setAsBox(1f, 0.05f);
+        FixtureDef barFixture = new FixtureDef();
+        barFixture.shape = barShape;
+        barFixture.density = 2;
+        bar.createFixture(barFixture);
 
-        jointDef.collideConnected = false;
+        RevoluteJointDef wheelJointDef = new RevoluteJointDef();
+        wheelJointDef.initialize(bar, wheel1, new Vector2(2, 2));
+        wheelJointDef.collideConnected = false;
+        wheelJointDef.enableMotor = true;
+        wheelJointDef.motorSpeed = -3.14f;
+        wheelJointDef.maxMotorTorque = 100;
+        wheel1Joint = (RevoluteJoint) world.createJoint(wheelJointDef);
 
-        joint = (RevoluteJoint) world.createJoint(jointDef);
-        joint.setMotorSpeed(5);
+        wheelJointDef.enableMotor = false;
+        wheelJointDef.initialize(bar, wheel2, new Vector2(4, 2));
+        wheel2Joint = (RevoluteJoint) world.createJoint(wheelJointDef);
+
         setToDestroy = false;
         setToDestroyJoint = false;
         jointNotDestroyed = true;
 
         BodyDef bDef2 = new BodyDef();
-        bDef2.position.set(4, 2);
+        bDef2.position.set(7, 2);
         bDef2.type = BodyDef.BodyType.DynamicBody;
         stone = world.createBody(bDef2);
 
@@ -89,18 +98,20 @@ public class Actor {
     }
 
     private boolean isAlive() {
-        return b2Body.getPosition().y > 0;
+        return bar.getPosition().y > 0;
     }
 
     public void update() {
         if (setToDestroyJoint) {
-            world.destroyJoint(joint);
+            world.destroyJoint(wheel1Joint);
+            world.destroyJoint(wheel2Joint);
             setToDestroyJoint = false;
             jointNotDestroyed = false;
         }
         if (setToDestroy) {
-            world.destroyBody(b2Body);
-            world.destroyBody(arm);
+            world.destroyBody(wheel1);
+            world.destroyBody(wheel2);
+            world.destroyBody(bar);
             world.destroyBody(stone);
             init();
         }
@@ -118,18 +129,18 @@ public class Actor {
     }
 
     public void jump() {
-        b2Body.applyLinearImpulse(new Vector2(0, 5.5f), b2Body.getWorldCenter(), true);
+        wheel2.applyLinearImpulse(new Vector2(0, 5.5f), wheel2.getWorldCenter(), true);
     }
 
     private void moveForward() {
-        if (b2Body.getLinearVelocity().x < 2) {
-            b2Body.applyLinearImpulse(new Vector2(1.5f, 0), b2Body.getWorldCenter().add(0, 0.2f), true);
+        if (wheel1.getLinearVelocity().x < 2) {
+            wheel1.applyLinearImpulse(new Vector2(1.5f, 0), wheel1.getWorldCenter(), true);
         }
     }
 
     private void moveBackward() {
-        if (b2Body.getLinearVelocity().x > -2) {
-            b2Body.applyLinearImpulse(new Vector2(-1.5f, 0), b2Body.getWorldCenter().add(0, 0.2f), true);
+        if (wheel1.getLinearVelocity().x > -2) {
+            wheel1.applyLinearImpulse(new Vector2(-1.5f, 0), wheel1.getWorldCenter(), true);
         }
     }
 

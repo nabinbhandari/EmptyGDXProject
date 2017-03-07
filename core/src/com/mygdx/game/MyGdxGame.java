@@ -46,14 +46,14 @@ public class MyGdxGame extends ApplicationAdapter {
         camera.position.set(Constants.VIEWPORT_WIDTH / 2, Constants.VIEWPORT_WIDTH / 2 * screenHeight / screenWidth, 0);
         camera.update();
 
-        fish = new Fish(this, 7, 1);
+        fish = new Fish(this, 7, .5f);
 
         actor = new Actor(this);
 
         InputAdapter inputAdapter = new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                if (screenY > screenHeight / 2 && actor.b2Body.getLinearVelocity().y == 0) {
+                if (screenY > screenHeight / 2 && (actor.bar.getLinearVelocity().y < 0.001f && actor.bar.getLinearVelocity().y > -0.001f)) {
                     actor.jump();
                 }
                 return true;
@@ -80,7 +80,7 @@ public class MyGdxGame extends ApplicationAdapter {
         actor.update();
         fish.update();
         fish.draw(batch);
-        camera.position.x = actor.b2Body.getWorldCenter().x;
+        camera.position.x = actor.bar.getWorldCenter().x;
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         batch.end();
